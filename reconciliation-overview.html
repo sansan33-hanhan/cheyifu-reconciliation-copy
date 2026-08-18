@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>对账管理模块 · 全景图</title>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: "PingFang SC", "Microsoft YaHei", "Helvetica Neue", Arial, sans-serif;
+    background: #f8fafc;
+    padding: 24px;
+    min-height: 100vh;
+  }
+  .header {
+    max-width: 1400px;
+    margin: 0 auto 16px;
+  }
+  h1 {
+    font-size: 22px;
+    color: #0f172a;
+    font-weight: 700;
+  }
+  .subtitle {
+    font-size: 13px;
+    color: #64748b;
+    margin-top: 4px;
+  }
+  .diagram-wrap {
+    max-width: 1400px;
+    margin: 0 auto;
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 24px;
+    box-shadow: 0 1px 3px rgba(15,23,42,.04), 0 8px 24px rgba(15,23,42,.04);
+  }
+  .legend {
+    max-width: 1400px;
+    margin: 16px auto 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    font-size: 13px;
+    color: #475569;
+  }
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+  }
+</style>
+</head>
+<body>
+<div class="header">
+  <h1>🚦 对账管理模块 · 全景图</h1>
+  <p class="subtitle">车易付充电运营平台 · 平台对账 + 商户对账 · 一张图讲清流程、状态、差异、闭环</p>
+</div>
+
+<div class="diagram-wrap">
+<div class="mermaid">
+flowchart TB
+    %% ========== 顶部：统一入口 ==========
+    NAV[fa:fa-bars 对账管理<br/>左侧一级菜单]:::nav
+    NAV --> P[平台对账<br/>二级菜单]:::nav
+    NAV --> M[商户对账<br/>二级菜单]:::nav
+
+    %% ========== 左半部分：平台对账 ==========
+    subgraph 平台对账 [平台对账 — 资金级 · 平台 ↔ 支付渠道]
+        direction TB
+        P --> P1[对账列表页]:::page
+        P1 --> P2{操作<br/>发起对账<br/>选择日期 + 渠道]:::action
+        P2 --> P3[系统自动勾对<br/>充值流水 + 退款流水<br/>逐笔匹配]:::process
+        P3 --> P4[对账单<br/>日期 x 渠道]:::entity
+        P4 --> P5{对账状态}
+        P5 -->|全部勾对成功 --> P6[对账成功]:::success
+        P5 -->|存在差异 --> P7[对账失败]:::danger
+        P6 --> P6a[可用于财务结算]:::result
+        P7 --> P8[查看详情]:::action
+
+        P8 --> P9[对账报告页]:::page
+        P9 --> P10[4个KPI<br/>平台流水 · 渠道流水<br/>已勾对金额 · 差异金额]:::kpi
+        P9 --> P11[资金流水明细]:::list
+
+        P11 --> P12{勾对状态}
+        P12 -->|已勾对| P13[✓ 对平<br/>金额一致]:::success
+        P12 -->|有差异| P14[✗ 差异]:::danger
+        P12 -->|在途| P15[⏳ 在途待对]:::warning
+
+        P14 --> P14a[差异类型]
+        P14a --> P14b[金额差异<br/>平台 vs 渠道 金额不等]:::diff
+        P14a --> P14c[平台单边<br/>平台有 · 渠道无]:::diff
+        P14a --> P14d[渠道单边<br/>渠道有 · 平台无]:::diff
+
+        P15 -->|次日账单到达 --> P3
+
+        P14 --> P16[溯源<br/>查看原始报文<br/>交易链路]:::action
+        P16 --> P17[运营/定位与处理]
+        P17 --> P17a[调账 / 补单 / 线下沟通]:::manual
+        P17 --> P17b[开发定位排查]:::manual
+        P17a --> P18[重新对账]:::action
+        P17b --> P18
+        P18 --> P3
+    end
+
+    %% ========== 右半部分：商户对账 ==========
+    subgraph 商户对账 [商户对账 — 业务级 · 平台 ↔ 商户]
+        direction TB
+        M --> M1[对账汇总页]:::page
+        M1 --> M2{操作<br/>发起对账<br/>选择日期 + 商户]:::action
+        M2 --> M3[系统自动匹配<br/>按订单号 / 站点 / 时间<br/>逐笔匹配]:::process
+        M3 --> M4[对账单<br/>日期 x 商户 x 厂商]:::entity
+        M4 --> M5{对账状态}
+        M5 -->|全部勾对成功| M6[对账成功]:::success
+        M5 -->|存在差异| M7[对账失败]:::danger
+        M6 --> M6a[可用于商户结算]:::result
+        M7 --> M8[查看详情]:::action
+
+        M8 --> M9[对账报告页]:::page
+        M9 --> M10[4个KPI<br/>平台订单数 · 商户订单数<br/>已勾对金额 · 差异金额]:::kpi
+        M9 --> M11[业务订单明细]:::list
+
+        M11 --> M12{勾对状态}
+        M12 -->|已勾对| M13[✓ 对平<br/>金额一致]:::success
+        M12 -->|有差异| M14[✗ 差异]:::danger
+
+        M14 --> M14a[差异类型]
+        M14a --> M14b[金额差异<br/>平台 vs 商户 金额不等]:::diff
+        M14a --> M14c[平台单边<br/>平台有 · 商户无]:::diff
+        M14a --> M14d[商户单边<br/>商户有 · 平台无]:::diff
+
+        M14 --> M16[溯源<br/>查看原始报文<br/>完整链路]:::action
+        M16 --> M17[运营与处理]
+        M17 --> M17a[调账 / 补单 / 线下沟通]:::manual
+        M17 --> M17b[开发定位排查]:::manual
+        M17a --> M18[重新对账]:::action
+        M17b --> M18
+        M18 --> M3
+    end
+
+    %% ========== 底部：共用概念层 ==========
+    subgraph 核心概念 [核心概念 · 两层状态体系]
+      direction LR
+      S1[汇总级状态<br/>对账成功 / 对账失败]
+      S2[明细级状态<br/>已勾对 / 有差异 / 在途]
+      S3[差异三类<br/>金额差异 · 单边 · 在途]
+    end
+
+    P4 -.-> S1
+    M4 -.-> S1
+    P12 -.-> S2
+    M12 -.-> S2
+    P14a -.-> S3
+    M14a -.-> S3
+
+    %% ========== 样式 ==========
+    classDef nav fill:#0b1526,color:#fff,stroke:#0b1526,stroke-width:2px
+    classDef page fill:#2563eb,color:#fff,stroke:#1d4ed8,stroke-width:2px
+    classDef action fill:#8b5cf6,color:#fff,stroke:#7c3aed,stroke-width:1px
+    classDef process fill:#0891b2,color:#fff,stroke:#0e7490,stroke-width:1px
+    classDef entity fill:#475569,color:#fff,stroke:#334155,stroke-width:1px
+    classDef success fill:#16a34a,color:#fff,stroke:#15803d,stroke-width:2px
+    classDef danger fill:#dc2626,color:#fff,stroke:#b91c1c,stroke-width:2px
+    classDef warning fill:#d97706,color:#fff,stroke:#b45309,stroke-width:2px
+    classDef diff fill:#f97316,color:#fff,stroke:#ea580c,stroke-width:1px
+    classDef result fill:#059669,color:#fff,stroke:#047857,stroke-width:1px
+    classDef kpi fill:#6366f1,color:#fff,stroke:#4f46e5,stroke-width:1px
+    classDef list fill:#64748b,color:#fff,stroke:#475569,stroke-width:1px
+    classDef manual fill:#9333ea,color:#fff,stroke:#7e22ce,stroke-width:1px
+
+</div>
+</div>
+
+<div class="legend">
+  <div class="legend-item"><span class="dot" style="background:#0b1526"></span>导航入口</div>
+  <div class="legend-item"><span class="dot" style="background:#2563eb"></span>页面</div>
+  <div class="legend-item"><span class="dot" style="background:#8b5cf6"></span>用户操作</div>
+  <div class="legend-item"><span class="dot" style="background:#0891b2"></span>系统处理</div>
+  <div class="legend-item"><span class="dot" style="background:#475569"></span>数据实体</div>
+  <div class="legend-item"><span class="dot" style="background:#16a34a"></span>成功 / 对平</div>
+  <div class="legend-item"><span class="dot" style="background:#dc2626"></span>失败 / 差异</div>
+  <div class="legend-item"><span class="dot" style="background:#d97706"></span>在途</div>
+  <div class="legend-item"><span class="dot" style="background:#f97316"></span>差异类型</div>
+  <div class="legend-item"><span class="dot" style="background:#6366f1"></span>KPI</div>
+  <div class="legend-item"><span class="dot" style="background:#9333ea"></span>人工处理</div>
+</div>
+
+<script>
+mermaid.initialize({
+  startOnLoad: true,
+  theme: 'default',
+  flowchart: {
+    useMaxWidth: true,
+    htmlLabels: true,
+    curve: 'basis',
+    nodeSpacing: 30,
+    rankSpacing: 40
+  }
+});
+</script>
+</body>
+</html>
