@@ -37,3 +37,6 @@ python3 -m http.server 8080
 # 平台对账：http://localhost:8080/index.html#platform
 # 商户对账：http://localhost:8080/index.html#merchant
 ```
+
+## 产品文档
+- [对账管理模块产品说明](reconciliation-prd.html) — 包含模块定位、核心概念、业务流程图、状态体系、数据模型、功能清单、对账闭环说明

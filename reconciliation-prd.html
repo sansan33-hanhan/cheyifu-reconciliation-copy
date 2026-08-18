@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>对账管理模块产品说明 - 车易付充电运营平台</title>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
+<style>
+:root{
+  --primary:#2563eb; --primary-light:#eff6ff; --primary-dark:#1d4ed8;
+  --success:#16a34a; --warning:#d97706; --danger:#dc2626;
+  --text-1:#0f172a; --text-2:#475569; --text-3:#94a3b8;
+  --border:#e2e8f0; --bg:#f8fafc; --card:#ffffff;
+  --radius:10px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{
+  font-family:"PingFang SC","Microsoft YaHei","Helvetica Neue",Arial,sans-serif;
+  background:var(--bg);color:var(--text-1);font-size:15px;line-height:1.8
+}
+.container{max-width:1100px;margin:0 auto;padding:32px 24px 80px}
+h1{font-size:28px;font-weight:700;margin-bottom:8px}
+.subtitle{color:var(--text-2);font-size:14px;margin-bottom:32px}
+h2{
+  font-size:20px;font-weight:700;margin:40px 0 16px;
+  padding-left:12px;border-left:4px solid var(--primary);
+  color:var(--text-1)
+}
+h3{font-size:16px;font-weight:600;margin:20px 0 10px;color:var(--text-1)}
+p{margin:8px 0}
+.card{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:var(--radius);padding:20px 24px;margin:16px 0;
+  box-shadow:0 1px 2px rgba(15,23,42,.04)
+}
+.kv{display:grid;grid-template-columns:140px 1fr;gap:8px 16px;margin:12px 0}
+.kv dt{font-weight:600;color:var(--text-2);font-size:14px}
+.kv dd{color:var(--text-1);font-size:14px}
+table{
+  width:100%;border-collapse:collapse;margin:12px 0;
+  font-size:14px;background:#fff;border:1px solid var(--border);
+  border-radius:var(--radius);overflow:hidden
+}
+th{
+  background:#f1f5f9;padding:10px 14px;text-align:left;
+  font-weight:600;color:var(--text-1);border-bottom:1px solid var(--border);
+  white-space:nowrap
+}
+td{padding:10px 14px;border-bottom:1px solid #f1f5f9;vertical-align:top}
+tr:last-child td{border-bottom:0}
+.pill{
+  display:inline-block;padding:2px 10px;border-radius:20px;
+  font-size:12px;font-weight:500
+}
+.pill.green{background:#dcfce7;color:#166534}
+.pill.red{background:#fee2e2;color:#991b1b}
+.pill.orange{background:#ffedd5;color:#92400e}
+.pill.blue{background:#dbeafe;color:#1e40af}
+.mermaid{
+  background:#fff;border:1px solid var(--border);border-radius:var(--radius);
+  padding:20px;margin:16px 0;border-radius:var(--radius)
+}
+ul,ol{margin:8px 0 8px 24px}
+li{margin:4px 0}
+.highlight{
+  background:linear-gradient(180deg,transparent 60%, rgba(37,99,235,.15) 60%);
+  font-weight:500
+}
+.tag{
+  display:inline-block;padding:1px 8px;border-radius:4px;
+  font-size:12px;font-family:monospace;background:#f1f5f9;color:var(--text-2)
+}
+.note{
+  background:var(--primary-light);border-left:3px solid var(--primary);
+  padding:12px 16px;border-radius:0 8px 8px 0;margin:12px 0;font-size:14px
+}
+.section-num{
+  display:inline-flex;align-items:center;justify-content:center;
+  width:24px;height:24px;border-radius:50%;background:var(--primary);
+  color:#fff;font-size:12px;font-weight:600;margin-right:8px
+}
+</style>
+</head>
+<body>
+<div class="container">
+
+<h1>🚦 对账管理模块产品说明</h1>
+<p class="subtitle">车易付充电运营平台 · 对账管理（平台对账 / 商户对账 · v1.0</p>
+
+<!-- ===================== 一、模块定位 =====================
+<h2>一、模块定位与核心价值</h2>
+<div class="card">
+<p>对账管理模块是车易付充电运营平台的财务运营台基础模块，解决的核心问题是：<b style="color:var(--primary)">平台资金/b> 平台侧业务数据与第三方数据/渠道资金数据之间是否一致</b>，确保每一笔交易、每一分钱都能说清来路、说得清去向、说得清差异。</p>
+<ul>
+<li><b>资金安全：发现差异及时发现资金差异，规避资金流失</b>及时发现资金差异，规避资金流失风险</li>
+<li><b>账务合规：</b>为财务结算提供可信对账结果作为结算依据</li>
+<li><b>运营效率：</b>自动化对账替代人工核对，降低运营成本</li>
+<li><b>问题闭环处理：</b>差异有记录可追溯、可解释、可跟进处理</li>
+</ul>
+</div>
+
+<div class="card">
+<h3>两大对账场景</h3>
+<table>
+<thead><tr><th>维度</th><th>平台对账</th><th>商户对账</th></tr></thead>
+<tbody>
+<tr>
+<td><b>对账双方</b></td>
+<td>平台 ↔ 支付渠道（微信等）</td>
+<td>平台 ↔ 商户（充电站运营商）</td>
+</tr>
+<tr>
+<td><b>对账对象</b></td>
+<td>资金流水（充值流水 + 退款流水）</td>
+<td>业务订单（充电订单）</td>
+</tr>
+<tr>
+<td><b>对账粒度</b></td>
+<td>按「日期 × 渠道，生成对账单</td>
+<td>按「日期 × 商户 × 厂商」，生成对账单</td>
+</tr>
+<tr>
+<td><b>核心差异</b></td>
+<td>金额差异、单边账、在途</td>
+<td>金额差异、平台单边、商户单边</td>
+</tr>
+<tr>
+<td><b>使用角色</b></td>
+<td>平台财务 / 运营</td>
+<td>商户运营 / 商务</td>
+</tr>
+</tbody>
+</table>
+</div>
+
+<!-- ===================== 二、核心概念 ===================== -->
+<h2>二、核心概念与术语</h2>
+<div class="card">
+<dl class="kv">
+<dt>对账单</dt><dd>某一维度（日期+渠道/日期+商户+厂商）下的对账结果汇总，是对账的基本单位</dd>
+<dt>勾对</dt><dd>将两方数据逐笔匹配的过程。勾得上的叫「已勾对」，勾不上的叫「有差异」</dd>
+<dt>已勾对</dt><dd>两方数据完全匹配（订单/金额一致</dd>
+<dt>有差异</dt><dd>两方数据存在不一致，包括金额差异和单边账</dd>
+<dt>金额差异</dt><dd>两边都有记录，但金额对不上</dd>
+<dt>单边账</dt><dd>一方有记录，另一方没有。分为「平台单边」和「渠道/商户单边」</dd>
+<dt>在途</dt><dd>平台侧已发生，但渠道账单尚未生成，次日账单到达后继续勾对</dd>
+<dt>即充即退</dt><dd>充电模式：先充值一笔 + 退款一笔，1 笔业务订单 = 2 条资金流水</dd>
+<dt>溯源</dt><dd>查看原始报文与交易链路，用于排查差异原因</dd>
+<dt>重新对账</dt><dd>对失败的对账单再次执行勾对逻辑，通常在补单或修正后使用</dd>
+</dl>
+</div>
+
+<!-- ===================== 三、平台对账流程 ===================== -->
+<h2>三、平台对账：业务流程</h2>
+<p>平台对账是「平台资金流水」与「支付渠道账单」之间的资金级对账。</p>
+
+<div class="mermaid">
+flowchart TD
+    A([发起对账]) --> B[按日期拉取<br/>平台资金流水]
+    A --> C[按日期获取<br/>渠道对账单]
+    B & C --> D[逐笔勾对<br/>充值与退款分别匹配]
+    D --> E{勾对结果}
+    E -->|全部匹配| F[对账成功]
+    E -->|存在差异| G[对账失败]
+    E -->|渠道账单未到| H[在途待对]
+    G --> I[差异明细<br/>金额差异 / 单边 / 在途]
+    F --> J[生成对账单<br/>可直接结算]
+    I --> K[运营介入<br/>补单/调账/沟通]
+    K --> L[重新对账]
+    L --> D
+    H -->|次日账单到达| D
+    style A fill:#2563eb,color:#fff
+    style F fill:#16a34a,color:#fff
+    style G fill:#dc2626,color:#fff
+    style H fill:#d97706,color:#fff
+</div>
+
+<div class="card">
+<h3><span class="section-num">1</span>发起对账</h3>
+<p>运营人员在平台对账列表页点击「发起对账」，选择交易日期和渠道，系统自动执行对账任务。</p>
+<ul>
+<li>对账范围：按「日期 + 渠道」维度</li>
+<li>当前渠道：微信（可扩展支付宝、银联等）</li>
+<li>业务模式：即充即退（1 笔订单 = 充值 + 退款 2 条流水）</li>
+</ul>
+</div>
+
+<div class="card">
+<h3><span class="section-num">2</span>对账列表</h3>
+<p>对账列表展示所有对账单的汇总状态，是运营人员日常看板。</p>
+<dl class="kv">
+<dt>列表字段</dt><dd>对账单号、交易日期、渠道、平台订单数、平台金额、渠道订单数、渠道金额、差异金额、对账状态</dd>
+<dt>筛选条件</dt><dd>日期范围、交易渠道、对账状态、对账状态</dd>
+<dt>对账状态</dt><dd><span class="pill green">对账成功</span> <span class="pill red">对账失败</span></dd>
+<dt>KPI 指标</dt><dd>对账单数、成功数、失败数、差异总金额</dd>
+<dt>操作</dt><dd>查看详情、重新对账（仅失败状态）</dd>
+</dl>
+</div>
+
+<div class="card">
+<h3><span class="section-num">3</span>对账报告（详情）</h3>
+<p>点击「查看详情」进入对账报告页，展示该日对账的资金流水级明细。</p>
+<table>
+<thead><tr><th>模块</th><th>内容</th></tr></thead>
+<tbody>
+<tr><td><b>筛选区</b></td><td>交易渠道、订单号搜索、只看异常对账开关</td></tr>
+<tr><td><b>4 个 KPI</b></td><td>平台流水笔数、渠道流水笔数、已勾对资金金额、差异金额</td></tr>
+<tr><td><b>明细表</b></td><td>序号、平台订单号、方向、渠道流水号、交易时间、平台金额、渠道金额、差异金额、勾对状态、对账结果/差异说明、操作</td></tr>
+</tbody>
+</table>
+</div>
+
+<div class="note">
+<b>设计要点：</b>平台对账以「资金流水」为最小粒度，每一条流水独立判断勾对状态。即充即退模式下，充值和退款分开勾对，互不影响。在途状态的流水不参与差异金额计算，次日续对。
+</div>
+
+<!-- ===================== 四、商户对账流程 ===================== -->
+<h2>四、商户对账：业务流程</h2>
+<p>商户对账是「平台业务订单」与「商户业务订单」之间的业务级对账。</p>
+
+<div class="mermaid">
+flowchart TD
+    A([发起对账]) --> B[按日期拉取<br/>平台业务订单]
+    A --> C[按日期获取<br/>商户业务订单]
+    B & C --> D[逐笔匹配<br/>按订单号/站点/时间]
+    D --> E{勾对结果}
+    E -->|全部匹配| F[对账成功]
+    E -->|存在差异| G[对账失败]
+    G --> H[差异明细<br/>金额差异 / 平台单边 / 商户单边]
+    F --> J[生成对账单<br/>可用于商户结算]
+    H --> K[运营介入<br/>补单/调账/沟通]
+    K --> L[重新对账]
+    L --> D
+    style A fill:#2563eb,color:#fff
+    style F fill:#16a34a,color:#fff
+    style G fill:#dc2626,color:#fff
+</div>
+
+<div class="card">
+<h3><span class="section-num">1</span>发起对账</h3>
+<p>运营人员在商户对账列表页点击「发起对账」，选择交易日期和商户。</p>
+<ul>
+<li>对账维度：日期 × 商户 × 厂商</li>
+<li>前提：商户侧订单已获取完成</li>
+</ul>
+</div>
+
+<div class="card">
+<h3><span class="section-num">2</span>对账汇总（列表页）</h3>
+<p>按「日期 + 商户 + 厂商」分组汇总，每个组即一个对账单。</p>
+<dl class="kv">
+<dt>列表字段</dt><dd>交易日期、商户、厂商、平台订单数、平台金额、商户订单数、商户金额、差异金额、对账状态、操作</dd>
+<dt>筛选条件</dt><dd>日期范围、商户、厂商、对账状态</dd>
+<dt>对账状态</dt><dd><span class="pill green">对账成功</span> <span class="pill red">对账失败</span></dd>
+<dt>KPI 指标</dt><dd>对账单数、成功数、失败数、差异总金额</dd>
+<dt>操作</dt><dd>查看详情、重新对账（仅失败）</dd>
+</dl>
+</div>
+
+<div class="card">
+<h3><span class="section-num">3</span>对账报告（详情页）</h3>
+<p>点击「查看详情」进入该对账单的订单级明细。</p>
+<table>
+<thead><tr><th>模块</th><th>内容</th></tr></thead>
+<tbody>
+<tr><td><b>筛选区</b></td><td>站点、勾对状态</td></tr>
+<tr><td><b>4 个 KPI</b></td><td>平台订单数、商户订单数、已勾对资金金额、差异总金额</td></tr>
+<tr><td><b>明细表</b></td><td>序号、平台订单号、商户订单号、站/桩/枪、订单时间、平台金额、商户金额、差异金额、勾对状态、对账结果/差异说明、操作</td></tr>
+</tbody>
+</table>
+</div>
+
+<!-- ===================== 五、状态体系 ===================== -->
+<h2>五、对账状态与差异类型体系</h2>
+
+<div class="card">
+<h3>两级状态模型</h3>
+<p>对账状态分为<b>汇总级</b>和<b>明细级</b>两层，层层递进，自上而下钻取。</p>
+<table>
+<thead><tr><th>层级</th><th>状态</th><th>含义</th><th>出现位置</th></tr></thead>
+<tbody>
+<tr><td rowspan="汇总级</td><td><span class="pill green">对账成功</span></td><td>该对账单下所有明细全部已勾对，无差异</td><td>对账列表</td></tr>
+<tr><td>汇总级</td><td><span class="pill red">对账失败</span></td><td>该对账单下存在至少一笔有差异</td><td>对账列表</td></tr>
+<tr><td rowspan="3">明细级</td><td><span class="pill green">已勾对</span></td><td>两方数据完全匹配</td><td>对账报告明细</td></tr>
+<tr><td>明细级</td><td><span class="pill red">有差异</span></td><td>存在金额差异或单边账</td><td>对账报告明细</td></tr>
+<tr><td>明细级</td><td><span class="pill orange">在途</span></td><td>渠道账单未到，次日续对（仅平台对账有）</td><td>对账报告明细</td></tr>
+</tbody>
+</table>
+</div>
+
+<div class="card">
+<h3>有差异的三种情况拆解</h3>
+<p>「有差异」不是一个单一状态，它包含三类具体差异类型，在「对账结果/差异说明」列中展示。</p>
+
+<div class="mermaid">
+graph TD
+    A[有差异] --> B[金额差异]
+    A --> C[平台单边]
+    A --> D[渠道/商户单边]
+    B --> B1[两方都有记录<br/>但金额不一致]
+    C --> C1[平台有记录<br/>对方无对应记录]
+    D --> D1[对方有记录<br/>平台无对应记录]
+    style A fill:#dc2626,color:#fff
+    style B fill:#f97316,color:#fff
+    style C fill:#f97316,color:#fff
+    style D fill:#f97316,color:#fff
+</div>
+
+<table>
+<thead><tr><th>差异类型</th><th>平台对账</th><th>商户对账</th><th>说明</th><th>常见原因</th></tr></thead>
+<tbody>
+<tr><td><b>金额差异</b></td><td>✓</td><td>✓</td><td>两边都有，但金额对不上</td><td>手续费、优惠计算口径不同、汇率、 rounding</td></tr>
+<tr><td><b>平台单边</b></td><td>✓</td><td>✓</td><td>平台有，对方没有</td><td>对方漏单、未同步、测试订单</td></tr>
+<tr><td><b>渠道/商户单边</b></td><td>✓（渠道单边）</td><td>✓（商户单边）</td><td>对方有，平台没有</td><td>平台漏单、丢单、数据同步延迟</td></tr>
+<tr><td><b>在途</b></td><td>✓</td><td>✗</td><td>平台有，渠道账单次日才到</td><td>T+1 账单机制</td></tr>
+</tbody>
+</table>
+</div>
+
+<div class="note">
+<b>为什么平台对账独有「在途」状态的设计逻辑：</b>渠道（尤其退款通常是 T+1 出账单，当日发生的退款可能要次日才出现在渠道账单中。因此平台对账引入「在途」状态，当天不记为差异，次日账单到达后自动续对，避免虚惊一场，也让差异数据更干净。
+</div>
+
+<!-- ===================== 六、数据关系 ===================== -->
+<h2>六、数据关系与勾对逻辑</h2>
+
+<div class="card">
+<h3>平台对账数据模型</h3>
+<div class="mermaid">
+erDiagram
+    RECON_BILL ||--o{ FLOW : contains
+    ORDER ||--o{ FLOW : produces
+    ORDER {
+        string platform_order_no PK
+        string channel
+        string mode
+        decimal charge_amount
+        decimal refund_matched_amount
+        decimal refund_pending_amount
+    }
+    FLOW {
+        string flow_no PK
+        string direction
+        string platform_flow_no
+        string channel_flow_no
+        datetime trade_time
+        decimal platform_amount
+        decimal channel_amount
+        string match_status
+        string result_type
+        string reason
+    }
+    RECON_BILL {
+        string recon_no PK
+        date trade_date
+        string channel
+        int platform_order_count
+        decimal platform_amount
+        int channel_order_count
+        decimal channel_amount
+        decimal diff_amount
+        string recon_status
+    }
+</div>
+</div>
+
+<div class="card">
+<h3>商户对账数据模型</h3>
+<div class="mermaid">
+erDiagram
+    RECON_SUMMARY ||--o{ ORDER_DETAIL : contains
+    ORDER_DETAIL {
+        string platform_order_no
+        string merchant_order_no
+        string merchant
+        string vendor
+        string station
+        datetime order_time
+        decimal platform_amount
+        decimal merchant_amount
+        decimal diff_amount
+        string match_status
+        string result_type
+        string reason
+    }
+    RECON_SUMMARY {
+        date trade_date PK
+        string merchant PK
+        string vendor PK
+        int platform_order_count
+        decimal platform_amount
+        int merchant_order_count
+        decimal merchant_amount
+        decimal diff_amount
+        string recon_status
+    }
+</div>
+</div>
+
+<div class="card">
+<h3>勾对规则</h3>
+<table>
+<thead><tr><th>规则</th><th>平台对账</th><th>商户对账</th></tr></thead>
+<tbody>
+<tr><td><b>匹配键</b></td><td>平台订单号 + 流水方向 + 金额</td><td>订单号 + 站点 + 时间</td></tr>
+<tr><td><b>粒度</b></td><td>流水级（充值/退款各一笔）</td><td>订单级</td></tr>
+<tr><td><b>判断已勾对</b></td><td>渠道金额 = 平台金额 且 两边都有记录</td><td>平台金额 = 商户金额 且 两边都有记录</td></tr>
+<tr><td><b>判断金额差异</b></td><td>两边都有，但金额不等</td><td>两边都有，但金额不等</td></tr>
+<tr><td><b>判断单边</b></td><td>一方有记录，另一方没有</td><td>一方有订单，另一方没有</td></tr>
+<tr><td><b>判断在途</b></td><td>平台有，渠道金额为空且状态为在途</td><td>—</td></tr>
+</tbody>
+</table>
+</div>
+
+<!-- ===================== 七、功能清单 ===================== -->
+<h2>七、功能清单与界面结构</h2>
+
+<div class="card">
+<h3>统一导航结构</h3>
+<div class="mermaid">
+graph LR
+    A[对账管理] --> B[平台对账]
+    A --> C[商户对账]
+    B --> B1[对账列表]
+    B --> B2[对账报告详情]
+    C --> C1[对账汇总列表]
+    C --> C2[对账报告详情]
+    style A fill:#0b1526,color:#fff
+    style B fill:#1e3a8a,color:#fff
+    style C fill:#1e3a8a,color:#fff
+</div>
+<ul>
+<li>左侧一级菜单：<b>对账管理</b></li>
+<li>二级菜单：<b>平台对账</b> / <b>商户对账</b></li>
+<li>点击菜单默认进入对应列表页（非详情页）</li>
+<li>支持浏览器前进后退</li>
+</ul>
+</div>
+
+<div class="card">
+<h3>功能清单</h3>
+<table>
+<thead><tr><th>模块</th><th>功能</th><th>平台对账</th><th>商户对账</th></tr></thead>
+<tbody>
+<tr><td rowspan="5"><b>列表页</b></td><td>对账单列表展示</td><td>✓</td><td>✓</td></tr>
+<tr><td>发起对账</td><td>✓</td><td>✓</td></tr>
+<tr><td>条件筛选</td><td>✓</td><td>✓</td></tr>
+<tr><td>KPI 概览</td><td>✓</td><td>✓</td></tr>
+<tr><td>日历视图</td><td>✓</td><td>✗</td></tr>
+<tr><td rowspan="5"><b>详情页</b></td><td>对账报告 KPI</td><td>✓</td><td>✓</td></tr>
+<tr><td>明细列表</td><td>✓</td><td>✓</td></tr>
+<tr><td>勾对状态筛选</td><td>✓（只看异常）</td><td>✓</td></tr>
+<tr><td>对账结果/差异说明</td><td>✓</td><td>✓</td></tr>
+<tr><td>溯源查看</td><td>✓</td><td>✓</td></tr>
+<tr><td><b>通用</b></td><td>重新对账</td><td>✓</td><td>✓</td></tr>
+<tr><td></td><td>明细导出</td><td>✓</td><td>✗</td></tr>
+</tbody>
+</table>
+</div>
+
+<!-- ===================== 八、闭环 ===================== -->
+<h2>八、对账闭环：从发起到处理</h2>
+
+<div class="mermaid">
+flowchart LR
+    A[1.发起对账] --> B[2.自动勾对]
+    B --> C[3.生成对账单]
+    C -->|对账成功| D[4.正常结算]
+    C -->|对账失败| E[5.运营排查差异]
+    E --> F{6.差异原因}
+    F -->|金额差异| G[调账/退款修正]
+    F -->|单边账| H[补单/确认]
+    F -->|在途| I[等待次日续对]
+    G --> J[7.重新对账]
+    H --> J
+    J --> B
+    style A fill:#2563eb,color:#fff
+    style D fill:#16a34a,color:#fff
+    style E fill:#dc2626,color:#fff
+    style I fill:#d97706,color:#fff
+</div>
+
+<div class="card">
+<ol>
+<li><b>发起对账：</b>运营按日期/商户发起，系统自动执行</li>
+<li><b>自动勾对：</b>系统按规则逐笔匹配，生成勾对结果</li>
+<li><b>生成对账单：</b>按维度汇总，标记对账成功/失败</li>
+<li><b>正常结算：</b>对账成功的对账单可直接用于财务结算</li>
+<li><b>运营排查：</b>对账失败的，运营进入详情页查看差异明细</li>
+<li><b>差异原因：</b>通过「对账结果/差异说明」和「溯源」定位原因</li>
+<li><b>重新对账：</b>问题修正后，重新执行勾对，直至对账成功</li>
+</ol>
+<p>在途状态的流水不需要人工介入，系统次日自动续对，形成自动化闭环。</p>
+</div>
+
+<div class="note">
+<b>闭环的关键设计：</b>每一笔差异都有明确的「状态」+「结果类型」+「原因说明」，让运营人员看到差异时，立刻知道「是什么问题」+「为什么会这样」+「大概怎么处理」，而不是只看到一个红色的「有差异」。这大大降低沟通成本，也让对账结果更可信。
+</div>
+
+<!-- ===================== 九、关键指标 ===================== -->
+<h2>九、关键指标（KPI 口径说明</h2>
+
+<div class="card">
+<h3>平台对账 KPI</h3>
+<table>
+<thead><tr><th>KPI</th><th>计算公式</th><th>说明</th></tr></thead>
+<tbody>
+<tr><td><b>平台流水笔数</b></td><td>充值流水数 + 退款流水数</td><td>平台侧全部资金流水总量</td></tr>
+<tr><td><b>渠道流水笔数</b></td><td>已勾对且有渠道金额的流水数</td><td>渠道账单中匹配到的数量</td></tr>
+<tr><td><b>已勾对资金金额</b></td><td>已勾对充值 − 已勾对退款（净额）</td><td>实际已勾对的资金净额</td></tr>
+<tr><td><b>差异金额</b></td><td>金额差异 + 单边金额合计</td><td>含金额差异笔数、单边笔数、在途笔数</td></tr>
+</tbody>
+</table>
+</div>
+
+<div class="card">
+<h3>商户对账 KPI</h3>
+<table>
+<thead><tr><th>KPI</th><th>计算公式</th><th>说明</th></tr></thead>
+<tbody>
+<tr><td><b>平台订单数</b></td><td>平台侧订单总数</td><td>含已勾对 + 有差异</td></tr>
+<tr><td><b>商户订单数</b></td><td>商户侧订单总数</td><td>含已勾对 + 有差异</td></tr>
+<tr><td><b>已勾对资金金额</b></td><td>已勾对订单的金额合计</td><td>对平的总金额</td></tr>
+<tr><td><b>差异总金额</b></td><td>所有差异订单的差异金额合计</td><td>含金额差异笔数、单边笔数</td></tr>
+</tbody>
+</table>
+</div>
+
+</div>
+
+<script>
+mermaid.initialize({
+  startOnLoad: true,
+  theme: 'default',
+  flowchart: { useMaxWidth: true, htmlLabels: true, curve: 'basis'
+});
+</script>
+</body>
+</html>
