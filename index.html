@@ -175,9 +175,27 @@ iframe.show { display: block; }
   const validPages = ['platform', 'merchant'];
   const links = document.querySelectorAll('.submenu a');
   const menu = document.getElementById('reconciliationMenu');
+  let currentPage = null;
+
+  function showListPage(page) {
+    const frame = document.getElementById(page);
+    if (!frame) return;
+    try {
+      if (page === 'platform') {
+        frame.contentWindow.location.hash = '#/list';
+      } else if (typeof frame.contentWindow.backToList === 'function') {
+        frame.contentWindow.backToList();
+      }
+    } catch (err) {
+      frame.src = page === 'platform'
+        ? 'platform_copy/platform-app.html#/list'
+        : 'merchant_copy/merchant-app.html';
+    }
+  }
 
   function activate(page, updateHash) {
     if (!validPages.includes(page)) page = 'platform';
+    const isPageSwitch = currentPage !== null && currentPage !== page;
     document.querySelectorAll('iframe').forEach(frame => {
       frame.classList.toggle('show', frame.id === page);
     });
@@ -190,7 +208,11 @@ iframe.show { display: block; }
     if (updateHash && location.hash !== '#' + page) location.hash = '#' + page;
     document.title = (page === 'merchant' ? '商户对账' : '平台对账') + ' - 车易付充电运营平台';
     if (window.innerWidth <= 760) document.querySelector('aside').classList.remove('show');
+    if (isPageSwitch) requestAnimationFrame(() => showListPage(page));
+    currentPage = page;
   }
+
+  links.forEach(link => link.addEventListener('click', () => showListPage(link.dataset.page)));
 
   menu.addEventListener('click', function () {
     this.classList.toggle('open');
