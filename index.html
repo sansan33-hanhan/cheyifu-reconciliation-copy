@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>车易付充电运营平台 - 对账管理</title>
+<style>
+:root {
+  --sidebar: #0b1526;
+  --sidebar-hover: rgba(255,255,255,.05);
+  --sidebar-active: linear-gradient(90deg, rgba(37,99,235,.92), rgba(37,99,235,.55));
+  --border: rgba(255,255,255,.08);
+  --text: #e2e8f0;
+  --muted: #8ea0b8;
+}
+* { box-sizing: border-box; }
+html, body { width: 100%; height: 100%; margin: 0; }
+body {
+  display: flex;
+  overflow: hidden;
+  background: #f4f6fa;
+  color: var(--text);
+  font-family: "PingFang SC", "Microsoft YaHei", "Helvetica Neue", Arial, sans-serif;
+}
+aside {
+  position: relative;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  width: 220px;
+  height: 100%;
+  flex: 0 0 220px;
+  background: var(--sidebar);
+  box-shadow: 1px 0 8px rgba(15,23,42,.18);
+}
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  height: 60px;
+  padding: 0 18px;
+  border-bottom: 1px solid var(--border);
+  color: #fff;
+  font-size: 15px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.logo-mark {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  flex: 0 0 28px;
+  border-radius: 8px;
+  background: linear-gradient(135deg,#3b82f6,#06b6d4);
+  color: #fff;
+  font-size: 13px;
+}
+.menu { flex: 1; padding: 12px 0; overflow-y: auto; }
+.menu-group { color: var(--muted); font-size: 12px; padding: 10px 18px 6px; }
+.primary-menu {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 42px;
+  padding: 0 18px;
+  color: #fff;
+  font-size: 13.5px;
+  user-select: none;
+}
+.primary-menu .ico { width: 18px; text-align: center; font-size: 15px; }
+.primary-menu .arrow { margin-left: auto; font-size: 10px; transition: transform .2s ease; }
+.primary-menu.open .arrow { transform: rotate(90deg); }
+.submenu { margin: 2px 0 8px; }
+.submenu a {
+  position: relative;
+  display: flex;
+  align-items: center;
+  min-height: 40px;
+  margin: 2px 8px;
+  padding: 0 10px 0 40px;
+  border-radius: 6px;
+  color: var(--muted);
+  font-size: 13px;
+  text-decoration: none;
+  transition: background .15s ease, color .15s ease;
+}
+.submenu a::before {
+  content: "";
+  position: absolute;
+  left: 24px;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: currentColor;
+}
+.submenu a:hover { color: #fff; background: var(--sidebar-hover); }
+.submenu a.active {
+  color: #fff;
+  background: var(--sidebar-active);
+}
+.user {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  height: 58px;
+  padding: 0 16px;
+  border-top: 1px solid var(--border);
+  color: var(--muted);
+  font-size: 12px;
+}
+.avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: linear-gradient(135deg,#6366f1,#3b82f6);
+  color: #fff;
+  font-size: 12px;
+}
+.user b { display: block; color: #fff; font-size: 12.5px; font-weight: 600; }
+main { position: relative; flex: 1; min-width: 0; height: 100%; }
+.menu-toggle { display: none; }
+iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; display: none; }
+iframe.show { display: block; }
+@media (max-width: 760px) {
+  aside { position: absolute; left: 0; top: 0; bottom: 0; transform: translateX(-100%); transition: transform .2s ease; }
+  aside.show { transform: none; }
+  .menu-toggle {
+    position: fixed;
+    z-index: 20;
+    left: 14px;
+    top: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border: 0;
+    border-radius: 8px;
+    background: #0b1526;
+    color: #fff;
+    font-size: 16px;
+    cursor: pointer;
+  }
+  main { width: 100%; }
+}
+</style>
+</head>
+<body>
+<button class="menu-toggle" type="button" aria-label="打开菜单" onclick="document.querySelector('aside').classList.toggle('show')">☰</button>
+<aside aria-label="左侧导航">
+  <div class="logo"><span class="logo-mark">车</span><span>车易付运营平台</span></div>
+  <nav class="menu" aria-label="对账管理">
+    <div class="menu-group">业务管理</div>
+    <div class="primary-menu open" id="reconciliationMenu">
+      <span class="ico">🔁</span><span>对账管理</span><span class="arrow">▶</span>
+    </div>
+    <div class="submenu" id="reconciliationSubmenu">
+      <a href="#platform" data-page="platform" aria-current="page">平台对账</a>
+      <a href="#merchant" data-page="merchant">商户对账</a>
+    </div>
+  </nav>
+  <div class="user"><span class="avatar">运</span><span><b>平台运营</b>车易付充电</span></div>
+</aside>
+<main>
+  <iframe id="platform" title="平台对账" src="platform_copy/platform-app.html#/list"></iframe>
+  <iframe id="merchant" title="商户对账" src="merchant_copy/merchant-app.html"></iframe>
+</main>
+<script>
+(function () {
+  const validPages = ['platform', 'merchant'];
+  const links = document.querySelectorAll('.submenu a');
+  const menu = document.getElementById('reconciliationMenu');
+
+  function activate(page, updateHash) {
+    if (!validPages.includes(page)) page = 'platform';
+    document.querySelectorAll('iframe').forEach(frame => {
+      frame.classList.toggle('show', frame.id === page);
+    });
+    links.forEach(link => {
+      const selected = link.dataset.page === page;
+      link.classList.toggle('active', selected);
+      if (selected) link.setAttribute('aria-current', 'page');
+      else link.removeAttribute('aria-current');
+    });
+    if (updateHash && location.hash !== '#' + page) location.hash = '#' + page;
+    document.title = (page === 'merchant' ? '商户对账' : '平台对账') + ' - 车易付充电运营平台';
+    if (window.innerWidth <= 760) document.querySelector('aside').classList.remove('show');
+  }
+
+  menu.addEventListener('click', function () {
+    this.classList.toggle('open');
+    document.getElementById('reconciliationSubmenu').style.display = this.classList.contains('open') ? 'block' : 'none';
+  });
+  window.addEventListener('hashchange', function () {
+    activate(location.hash.replace('#', ''), false);
+  });
+  activate(location.hash.replace('#', '') || 'platform', true);
+})();
+</script>
+</body>
+</html>

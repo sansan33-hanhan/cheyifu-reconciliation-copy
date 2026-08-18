@@ -20,15 +20,20 @@
 - platform.html 原引用的外部脚本 sdk-seed.js 已下载到本地并更新引用路径
 - 原始源地址未做任何修改，这是独立的本地副本
 
-## 本地预览
-用浏览器直接打开 HTML 文件即可：
-- 平台对账：platform_copy/platform.html
-- 商户对账：merchant_copy/merchant.html
+## 统一入口
+- 对账管理（平台对账 / 商户对账）：index.html
+- 平台对账：index.html#platform
+- 商户对账：index.html#merchant
+
+旧链接会自动跳转到统一入口；功能页源文件为：
+- 平台对账：platform_copy/platform-app.html
+- 商户对账：merchant_copy/merchant-app.html
 
 或用本地服务器：
 ```bash
 cd outputs
 python3 -m http.server 8080
-# 访问 http://localhost:8080/platform_copy/platform.html#/list
-# 访问 http://localhost:8080/merchant_copy/merchant.html
+# 统一入口：http://localhost:8080/index.html
+# 平台对账：http://localhost:8080/index.html#platform
+# 商户对账：http://localhost:8080/index.html#merchant
 ```
