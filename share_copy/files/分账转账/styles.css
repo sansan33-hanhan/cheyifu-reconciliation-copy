@@ -17,6 +17,9 @@ body {
   left:-122px;
   z-index:0;
 }
+.sticky_1 {
+  display:none !important;
+}
 #u0 {
   border-width:0px;
   position:absolute;
