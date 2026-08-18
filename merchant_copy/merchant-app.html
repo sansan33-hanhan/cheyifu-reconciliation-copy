@@ -330,7 +330,7 @@ function renderList(){
       <td class="num">${r.mAmount===null?'-':money(r.mAmount)}</td>
       <td class="num ${diffBad?'diff-bad':'diff-zero'}">${r.diff===null?'-':money(r.diff)}</td>
       <td><span class="pill ${sc}"><span class="dot"></span>${r.status}</span></td>
-      <td title="${r.reason}">${r.result}<div style="font-size:11px;color:#94a3b8;max-width:220px;white-space:normal">${r.reason||'-'}</div></td>
+      <td title="${r.result==='对平'?'':r.reason}">${r.result}${r.result==='对平'?'':`<div style="font-size:11px;color:#94a3b8;max-width:220px;white-space:normal">${r.reason||'-'}</div>`}</td>
       <td><span class="link" onclick="toast('订单溯源：可查看双方原始报文与完整链路')">溯源</span></td>
     </tr>`;
   });

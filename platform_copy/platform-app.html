@@ -469,7 +469,17 @@ const chargeOrders = [
   {order:'000202026072359980000000003', ch:'微信', mode:'即充即退', charge:16.00, refundMatched:0, refundPending:16.00,
    flows:[
      {dir:'充值', pf:'CZ2026072900000003', flow:'4200003177202607299463102854', time:'2026-07-29 23:48:02', pa:16.00, ca:16.00, st:'已勾对'},
-     {dir:'退款', pf:'TK2026072900000003', flow:'—（预计 07-30 账单）', time:'2026-07-29 23:48:15', pa:16.00, ca:null, st:'在途'}
+     {dir:'退款', pf:'TK2026072900000003', flow:'-（预计 07-30 账单）', time:'2026-07-29 23:48:15', pa:16.00, ca:null, st:'在途'}
+   ]},
+  {order:'000202026073015201000000004', ch:'微信', mode:'即充即退', charge:20.00, refundMatched:20.00, refundPending:0,
+   flows:[
+     {dir:'充值', pf:'CZ2026073000000004', flow:'4200003128202607305781425204', time:'2026-07-30 15:20:10', pa:20.00, ca:18.00, st:'有差异'},
+     {dir:'退款', pf:'TK2026073000000004', flow:'5020000871202607305800962204', time:'2026-07-30 15:20:28', pa:20.00, ca:20.00, st:'已勾对'}
+   ]},
+  {order:'000202026073018361000000005', ch:'微信', mode:'即充即退', charge:15.00, refundMatched:0, refundPending:0,
+   flows:[
+     {dir:'充值', pf:'CZ2026073000000005', flow:'4200003128202607305781425205', time:'2026-07-30 18:36:07', pa:15.00, ca:15.00, st:'已勾对'},
+     {dir:'退款', pf:'TK2026073000000005', flow:'-', time:'2026-07-30 18:36:24', pa:15.00, ca:null, st:'有差异'}
    ]}
 ];
 let viewMode = 'flow';   // 流水模式
@@ -733,9 +743,10 @@ function flowStatus(f){
 }
 function flowResult(f, status){
   if(status === '在途') return {result:'在途待对', reason:'渠道账单尚未生成，系统将在次日账单到达后继续勾对'};
-  if(f.ca === null) return {result:'渠道单边', reason:'平台存在该资金流水，渠道账单中暂无对应记录'};
-  if(status === '有差异') return {result:'金额不一致', reason:'平台 ' + fmt(f.pa) + ' / 渠道 ' + fmt(f.ca)};
-  return {result:'对平', reason:'平台金额、渠道金额、流水方向及交易时间均一致'};
+  if(f.pa === null && f.ca !== null) return {result:'渠道单边', reason:'渠道存在该资金流水，平台账单中暂无对应记录'};
+  if(f.ca === null) return {result:'平台单边', reason:'平台存在该资金流水，渠道账单中无对应记录'};
+  if(status === '有差异') return {result:'金额差异', reason:'平台 ' + fmt(f.pa) + ' / 渠道 ' + fmt(f.ca)};
+  return {result:'对平', reason:''};
 }
 function flowRow(f, order, i){
   const diff = f.ca === null ? f.pa : Math.abs(f.pa - f.ca);
@@ -752,7 +763,7 @@ function flowRow(f, order, i){
     <td class="num">${f.ca===null?'<span style="color:var(--text-3)">-</span>':(f.dir==='退款'?'-':'')+fmt(f.ca)}</td>
     <td class="num ${status==='在途'?'':'diff-zero'}">${status==='在途'?'<span class="pill orange"><span class="dot"></span>在途待对</span>':fmt(diff)}</td>
     <td><span class="pill ${statusClass}"><span class="dot"></span>${status}</span></td>
-    <td title="${explanation.reason}">${explanation.result}<div style="font-size:11px;color:#94a3b8;max-width:220px;white-space:normal">${explanation.reason}</div></td>
+    <td title="${explanation.reason}">${explanation.result}${explanation.reason?`<div style="font-size:11px;color:#94a3b8;max-width:220px;white-space:normal">${explanation.reason}</div>`:''}</td>
     <td><span class="link" onclick="toast('流水溯源：可查看渠道原始报文与回调链路')">溯源</span></td>`;
 }
 function renderReportTable(){
