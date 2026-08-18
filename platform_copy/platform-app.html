@@ -726,8 +726,22 @@ function switchMode(m){
 }
 const emptyRow = cols => `<tr><td colspan="${cols}"><div class="empty"><div class="ico">✨</div>当前筛选条件下无异常对账记录，全部对平</div></td></tr>`;
 
+function flowStatus(f){
+  if(f.st === '在途') return '在途';
+  if(f.st === '有差异' || f.ca === null || f.pa !== f.ca) return '有差异';
+  return '已勾对';
+}
+function flowResult(f, status){
+  if(status === '在途') return {result:'在途待对', reason:'渠道账单尚未生成，系统将在次日账单到达后继续勾对'};
+  if(f.ca === null) return {result:'渠道单边', reason:'平台存在该资金流水，渠道账单中暂无对应记录'};
+  if(status === '有差异') return {result:'金额不一致', reason:'平台 ' + fmt(f.pa) + ' / 渠道 ' + fmt(f.ca)};
+  return {result:'对平', reason:'平台金额、渠道金额、流水方向及交易时间均一致'};
+}
 function flowRow(f, order, i){
   const diff = f.ca === null ? f.pa : Math.abs(f.pa - f.ca);
+  const status = flowStatus(f);
+  const explanation = flowResult(f, status);
+  const statusClass = status === '已勾对' ? 'green' : (status === '在途' ? 'orange' : 'red');
   return `
     <td>${i+1}</td>
     <td class="mono" style="color:var(--text-2)">${order}</td>
@@ -735,12 +749,12 @@ function flowRow(f, order, i){
     <td class="mono" style="color:var(--text-2)">${f.flow}</td>
     <td style="color:var(--text-2)">${f.time}</td>
     <td class="num">${f.dir==='退款'?'-':''}${fmt(f.pa)}</td>
-    <td class="num">${f.ca===null?'<span style="color:var(--text-3)">—</span>':(f.dir==='退款'?'-':'')+fmt(f.ca)}</td>
-    <td class="num ${f.st==='在途'?'':'diff-zero'}">${f.st==='在途'?'<span class="pill orange"><span class="dot"></span>在途待对</span>':fmt(diff)}</td>
-    <td>${f.st==='在途'?'<span class="pill orange"><span class="dot"></span>在途（次日续对）</span>':'<span class="pill green"><span class="dot"></span>已勾对</span>'}</td>
+    <td class="num">${f.ca===null?'<span style="color:var(--text-3)">-</span>':(f.dir==='退款'?'-':'')+fmt(f.ca)}</td>
+    <td class="num ${status==='在途'?'':'diff-zero'}">${status==='在途'?'<span class="pill orange"><span class="dot"></span>在途待对</span>':fmt(diff)}</td>
+    <td><span class="pill ${statusClass}"><span class="dot"></span>${status}</span></td>
+    <td title="${explanation.reason}">${explanation.result}<div style="font-size:11px;color:#94a3b8;max-width:220px;white-space:normal">${explanation.reason}</div></td>
     <td><span class="link" onclick="toast('流水溯源：可查看渠道原始报文与回调链路')">溯源</span></td>`;
 }
-
 function renderReportTable(){
   const body = $('reportBody');
   const head = $('reportHead');
@@ -748,11 +762,11 @@ function renderReportTable(){
   body.innerHTML = '';
 
   /* ---- 充值与退款统一列表，与渠道账单逐笔勾对 ---- */
-  head.innerHTML = `<tr><th>序号</th><th>平台订单号</th><th>方向</th><th>渠道流水号</th><th>交易时间</th><th class="num">平台金额</th><th class="num">渠道金额</th><th class="num">差异金额</th><th>勾对状态</th><th>操作</th></tr>`;
+  head.innerHTML = `<tr><th>序号</th><th>平台订单号</th><th>方向</th><th>渠道流水号</th><th>交易时间</th><th class="num">平台金额</th><th class="num">渠道金额</th><th class="num">差异金额</th><th>勾对状态</th><th>对账结果 / 差异说明</th><th>操作</th></tr>`;
   let flows = [];
   chargeOrders.forEach(o => o.flows.forEach(f => flows.push({f, order:o.order})));
-  if(onlyDiff) flows = flows.filter(x => x.f.st === '在途' || (x.f.ca !== null && x.f.pa !== x.f.ca));
-  if(!flows.length){ body.innerHTML = emptyRow(10); $('reportTotal').textContent = '共 0 条记录'; return; }
+  if(onlyDiff) flows = flows.filter(x => x.f.st === '在途' || x.f.st === '有差异' || x.f.ca === null || (x.f.pa !== x.f.ca));
+  if(!flows.length){ body.innerHTML = emptyRow(11); $('reportTotal').textContent = '共 0 条记录'; return; }
   flows.forEach((x, i) => {
     const tr = document.createElement('tr');
     if(x.f.st === '在途') tr.style.background = '#fffbeb';
