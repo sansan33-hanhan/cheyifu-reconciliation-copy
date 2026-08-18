@@ -1,0 +1,376 @@
+<!DOCTYPE html><html lang="zh-CN"><head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>车易付充电运营平台 - 商户与平台业务订单对账</title>
+<style>
+:root{--primary:#2563eb;--primary-light:#eff6ff;--primary-dark:#1d4ed8;--success:#16a34a;--success-bg:#f0fdf4;--warning:#d97706;--warning-bg:#fffbeb;--danger:#dc2626;--danger-bg:#fef2f2;--text1:#0f172a;--text2:#475569;--text3:#94a3b8;--border:#e2e8f0;--bg:#f4f6fa;--card:#fff;--sidebar:#0b1526;--shadow:0 1px 3px rgba(15,23,42,.06),0 4px 14px rgba(15,23,42,.05)}
+*{box-sizing:border-box;margin:0;padding:0;font-family:"PingFang SC","Microsoft YaHei","Helvetica Neue",Arial,sans-serif}
+body{background:var(--bg);color:var(--text1);font-size:14px;min-width:1440px}
+::-webkit-scrollbar{width:8px;height:8px}::-webkit-scrollbar-thumb{background:#cbd5e1;border-radius:4px}
+.layout{display:flex;min-height:100vh}.sidebar{display:none}
+.logo{height:60px;display:flex;align-items:center;gap:10px;padding:0 18px;color:#fff;font-size:15px;font-weight:600;border-bottom:1px solid rgba(255,255,255,.08)}.logo .mark{width:28px;height:28px;border-radius:8px;background:linear-gradient(135deg,#3b82f6,#06b6d4);display:flex;align-items:center;justify-content:center;font-size:13px}
+.menu{padding:10px 0}.menu-item{display:flex;align-items:center;gap:10px;padding:11px 18px;font-size:13.5px;cursor:pointer}.menu-item:hover{color:#e2e8f0;background:rgba(255,255,255,.04)}.submenu{background:rgba(0,0,0,.25)}.submenu .menu-item{padding-left:48px;font-size:13px}.submenu .menu-item.active{color:#fff;background:linear-gradient(90deg,rgba(37,99,235,.9),rgba(37,99,235,.55));margin:2px 8px;padding-left:40px;border-radius:6px}
+.main{margin-left:0;min-height:100vh}.topbar{height:60px;background:#fff;border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 24px;position:sticky;top:0;z-index:50}.crumb{color:var(--text3);font-size:13px}.crumb b{color:var(--text1)}.right{margin-left:auto;display:flex;gap:14px;align-items:center}.icon-btn{width:34px;height:34px;border:1px solid var(--border);border-radius:8px;background:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer}.avatar{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#6366f1,#3b82f6);color:#fff;display:flex;align-items:center;justify-content:center;font-size:13px}
+.content{padding:20px 24px}.view{display:none}.view.show{display:block;animation:fade .2s}@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.card{background:var(--card);border:1px solid #eef1f6;border-radius:10px;box-shadow:var(--shadow)}.btn{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border:1px solid var(--border);border-radius:8px;background:#fff;color:var(--text2);font-size:13px;cursor:pointer;white-space:nowrap}.btn:hover{border-color:var(--primary);color:var(--primary)}.btn.primary{background:var(--primary);border-color:var(--primary);color:#fff}.btn.primary:hover{background:var(--primary-dark);color:#fff}.btn.sm{padding:5px 12px;font-size:12.5px}
+.input,.select{height:36px;border:1px solid var(--border);border-radius:8px;padding:0 12px;background:#fff;font-size:13px;outline:none}.input:focus,.select:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(37,99,235,.1)}
+.filter{display:flex;align-items:center;gap:10px;padding:16px 20px;flex-wrap:wrap}.label{font-size:13px;color:var(--text2);white-space:nowrap}.spacer{flex:1}
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:16px}.kpi{position:relative;overflow:hidden;padding:18px 20px}.k-title{font-size:13px;color:var(--text2)}.k-value{font-size:27px;font-weight:750;margin:9px 0 12px}.k-sub{display:flex;gap:14px;flex-wrap:wrap;font-size:12px;color:var(--text3)}.k-sub b{color:var(--text2)}.k-ico{position:absolute;right:16px;top:16px;font-size:28px;opacity:.16}
+.table-card{overflow:hidden;margin-bottom:18px}.toolbar{display:flex;align-items:center;gap:12px;padding:15px 20px;border-bottom:1px solid var(--border)}.tt{font-size:15px;font-weight:700}.count{font-size:12.5px;color:var(--text3)}
+.table-wrap{overflow:auto;height:640px}table{width:100%;border-collapse:collapse}th{position:sticky;top:0;background:#f8fafc;color:var(--text3);font-size:12px;text-align:left;padding:12px 14px;border-bottom:1px solid var(--border);white-space:nowrap;z-index:2}td{padding:12px 14px;border-bottom:1px solid #f1f5f9;color:var(--text2);font-size:13px;vertical-align:middle}.num{text-align:right}.mono{font-family:Menlo,Consolas,monospace;font-size:12px}.link{color:var(--primary);cursor:pointer;margin-right:10px}.link:hover{text-decoration:underline}
+.pill{display:inline-flex;align-items:center;gap:6px;padding:3px 10px;border-radius:12px;font-size:12px;white-space:nowrap}.pill .dot{width:5px;height:5px;border-radius:50%;background:currentColor}.gray{color:#64748b;background:#f1f5f9}.blue{color:var(--primary);background:var(--primary-light)}.green{color:var(--success);background:var(--success-bg)}.orange{color:var(--warning);background:var(--warning-bg)}.red{color:var(--danger);background:var(--danger-bg)}
+.empty{padding:60px;text-align:center;color:var(--text3)}.pagination{display:flex;justify-content:flex-end;align-items:center;gap:8px;padding:14px 20px;color:var(--text3);font-size:13px}.pg{min-width:30px;height:30px;border:1px solid var(--border);border-radius:6px;display:flex;align-items:center;justify-content:center;background:#fff}.pg.active{background:var(--primary);border-color:var(--primary);color:#fff}
+.detail-header{display:flex;align-items:center;gap:14px;margin-bottom:16px}.back{width:36px;height:36px;border:1px solid var(--border);border-radius:9px;background:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text2)}.detail-header h2{font-size:18px}
+.seg{display:inline-flex;background:#f1f5f9;border-radius:9px;padding:3px}.sg{padding:6px 18px;border-radius:7px;font-size:13px;color:var(--text2);cursor:pointer}.sg.active{background:#fff;color:var(--primary);font-weight:700;box-shadow:0 1px 3px rgba(15,23,42,.12)}
+.help-wrap{position:relative;display:inline-flex}.help-dot{width:18px;height:18px;border-radius:50%;background:var(--primary-light);color:var(--primary);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;cursor:help;margin-left:6px}.help-panel{display:none;position:absolute;left:0;top:28px;width:500px;background:#fff;border:1px solid var(--border);border-radius:10px;box-shadow:0 10px 32px rgba(15,23,42,.18);padding:13px;font-size:12px;line-height:1.8;color:var(--text2);z-index:100}.help-wrap:hover .help-panel{display:block}
+.toggle{display:inline-flex;align-items:center;gap:8px;color:var(--text2);font-size:13px;cursor:pointer}.sw{width:36px;height:20px;border-radius:20px;background:#cbd5e1;position:relative}.sw::after{content:"";position:absolute;width:16px;height:16px;border-radius:50%;background:#fff;left:2px;top:2px}.toggle.on .sw{background:var(--primary)}.toggle.on .sw::after{left:18px}
+.modal-mask{position:fixed;inset:0;background:rgba(15,23,42,.45);display:none;align-items:center;justify-content:center;z-index:500}.modal-mask.show{display:flex}.modal{width:560px;background:#fff;border-radius:12px;overflow:hidden;animation:pop .2s}@keyframes pop{from{transform:scale(.95);opacity:0}to{transform:scale(1);opacity:1}}.m-head{padding:16px 20px;border-bottom:1px solid var(--border);font-weight:700;display:flex}.x{margin-left:auto;cursor:pointer;color:var(--text3)}.m-body{padding:20px;max-height:65vh;overflow:auto}.m-foot{padding:14px 20px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:10px}.form-row{display:flex;align-items:center;gap:12px;margin-bottom:16px}.f-label{width:100px;color:var(--text2);font-size:13px;flex-shrink:0}.form-col{margin-bottom:16px}.form-col label{display:block;margin-bottom:7px;color:var(--text2);font-size:13px}textarea{width:100%;height:80px;border:1px solid var(--border);border-radius:8px;padding:10px;resize:none;font-size:13px;outline:none}.dlist{background:#f8fafc;border:1px solid var(--border);border-radius:8px;padding:12px;margin-bottom:16px;color:var(--text2);font-size:12.5px;line-height:1.8}
+.toast{position:fixed;top:70px;left:50%;transform:translate(-50%,-16px);background:#0f172a;color:#fff;padding:10px 22px;border-radius:9px;font-size:13px;opacity:0;transition:.25s;pointer-events:none;z-index:999}.toast.show{opacity:1;transform:translate(-50%,0)}.toast.success{background:var(--success)}
+.diff-bad{color:var(--danger);font-weight:700}.diff-zero{color:var(--text3)}
+.expand-cell{width:34px;color:var(--text3);cursor:pointer;font-size:11px;user-select:none}
+tr.detail-row td{background:#f8fafc;padding:0 16px}
+.hidden-row{display:none}
+</style></head><body>
+<div class="layout">
+  <aside class="sidebar">
+    <div class="logo"><span class="mark">车</span>车易付充电运营平台</div>
+    <nav class="menu">
+      <div class="menu-item">📊 总览</div><div class="menu-item">🧾 订单中心</div><div class="menu-item open">⚖️ 对账管理</div>
+      <div class="submenu"><div class="menu-item active">商户对账</div></div><div class="menu-item">💴 分账管理</div><div class="menu-item">⚙️ 系统管理</div>
+    </nav>
+  </aside>
+  <div class="main">
+    <header class="topbar"><div class="crumb" id="crumb">对账管理 / <b>商户对账</b></div><div class="right"><div class="icon-btn">⬇</div><div class="icon-btn">🔔</div><div class="avatar">晏</div></div></header>
+    <div class="content">
+      <section class="view show" id="viewSummary">
+        <div class="card filter">
+          <span class="label">交易日期</span><input class="input" type="date" id="qStart" value="2026-07-24"/><span>-</span><input class="input" type="date" id="qEnd" value="2026-07-24"/>
+          <span class="label">商户</span><select class="select" id="qMerchant"><option value="">全部</option></select>
+          <span class="label">厂商</span><select class="select" id="qVendor"><option value="">全部</option></select>
+          <span class="label">对账状态</span><select class="select" id="qStatus"><option value="">全部</option><option>对账成功</option><option>对账失败</option></select>
+          <button class="btn primary" onclick="applySummaryFilter()">查询</button><button class="btn" onclick="resetSummaryFilter()">重置</button>
+        </div>
+        <div class="kpis">
+          <div class="card kpi"><div class="k-title">对账单数</div><div class="k-value" id="sTotal">0</div><div class="k-sub" id="sTotalSub"></div><div class="k-ico">📋</div></div>
+          <div class="card kpi"><div class="k-title">对账成功</div><div class="k-value" id="sSuccess">0</div><div class="k-sub" id="sSuccessSub"></div><div class="k-ico">✅</div></div>
+          <div class="card kpi"><div class="k-title">对账失败</div><div class="k-value" id="sFail">0</div><div class="k-sub" id="sFailSub"></div><div class="k-ico">⚠️</div></div>
+          <div class="card kpi"><div class="k-title">差异总金额</div><div class="k-value" id="sDiff">¥ 0.00</div><div class="k-sub" id="sDiffSub"></div><div class="k-ico">💸</div></div>
+        </div>
+        <div class="card table-card">
+          <div class="toolbar"><span class="tt">商户对账列表</span><div class="spacer"></div><button class="btn primary" onclick="openStartReconcile()">发起对账</button></div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>序号</th><th>交易日期</th><th>商户</th><th>厂商</th><th class="num">平台订单数</th><th class="num">平台金额</th><th class="num">商户订单数</th><th class="num">商户金额</th><th class="num">差异金额</th><th>对账状态</th><th>操作</th></tr></thead>
+              <tbody id="summaryBody"></tbody>
+            </table>
+          </div>
+          <div class="pagination"><span id="summaryTotal"></span><span class="pg">‹</span><span class="pg active">1</span><span class="pg">›</span></div>
+        </div>
+      </section>
+
+      <section class="view" id="viewDetail">
+        <div class="detail-header"><div class="back" onclick="backToList()">←</div><div><h2>对账报告</h2><div class="detail-sub" id="detailSub" style="font-size:12px;color:var(--text3);margin-top:4px"></div></div></div>
+        <div class="card filter">
+          <span class="label">站点</span><select class="select" id="qDetailStation"><option value="">全部站点</option></select>
+          <span class="label">对账状态</span><select class="select" id="qStatus"><option value="">全部</option><option>已勾对</option><option>有差异</option></select>
+          <button class="btn primary" onclick="applyDetailFilter()">查询</button><button class="btn" onclick="resetDetailFilter()">重置</button>
+        </div>
+        <div class="kpis">
+          <div class="card kpi"><div class="k-title">平台订单数</div><div class="k-value" id="dPlatformCount">0</div><div class="k-sub" id="dPlatformCountSub"></div><div class="k-ico">📋</div></div>
+          <div class="card kpi"><div class="k-title">商户订单数</div><div class="k-value" id="dMerchantCount">0</div><div class="k-sub" id="dMerchantCountSub"></div><div class="k-ico">🧾</div></div>
+          <div class="card kpi"><div class="k-title">已勾对资金金额</div><div class="k-value" id="dMatchedAmount">¥ 0.00</div><div class="k-sub" id="dMatchedAmountSub"></div><div class="k-ico">💰</div></div>
+          <div class="card kpi"><div class="k-title">差异总金额</div><div class="k-value" id="dDiff">¥ 0.00</div><div class="k-sub" id="dDiffSub"></div><div class="k-ico">💸</div></div>
+        </div>
+        <div class="card table-card">
+          <div class="toolbar"><span class="tt">业务订单明细</span><span class="count" id="detailCount"></span><div class="spacer"></div></div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>序号</th><th>平台订单号</th><th>商户订单号</th><th>站/桩/枪</th><th>订单时间</th><th class="num">平台金额</th><th class="num">商户金额</th><th class="num">差异金额</th><th>对账状态</th><th>对账结果 / 差异说明</th><th>操作</th></tr></thead>
+              <tbody id="listBody"></tbody>
+            </table>
+          </div>
+          <div class="pagination"><span id="pageTotal"></span><span class="pg">‹</span><span class="pg active">1</span><span class="pg">›</span></div>
+        </div>
+      </section>
+    </div>
+  </div>
+</div>
+<div class="modal-mask" id="reconcileModal">
+  <div class="modal">
+    <div class="m-head">发起对账<span class="x" onclick="closeStartReconcile()">×</span></div>
+    <div class="m-body">
+      <div class="form-row"><span class="f-label">交易日期</span><input class="input" type="date" id="reconDate" value="2026-07-24"/></div>
+      <div class="form-row"><span class="f-label">商户</span><select class="select" id="reconMerchant"><option value="">全部商户</option><option>星星充电服务</option><option>湾区停车充电</option></select></div>
+      <div class="dlist">将对所选交易日期和商户的业务订单发起对账。发起对账前，请确保相关商户订单已获取完成。</div>
+    </div>
+    <div class="m-foot"><button class="btn" onclick="closeStartReconcile()">取消</button><button class="btn primary" onclick="confirmStartReconcile()">确认发起</button></div>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+<script>
+const rows=[
+ {p:'PZ2026072400001',m:'SH2026072400001',merchant:'星星充电服务',vendor:'星星科技',station:'科技园 A 站 / 01桩 / 01枪',date:'2026-07-24',start:'2026-07-24 08:12:05',power:32.6,pAmount:98,mAmount:98,diff:0,status:'已勾对',result:'对平',reason:'订单金额、退款金额、设备信息均一致'},
+ {p:'PZ2026072400002',m:'SH2026072400002',merchant:'星星充电服务',vendor:'星星科技',station:'科技园 A 站 / 01桩 / 02枪',date:'2026-07-24',start:'2026-07-24 10:20:11',power:31.8,pAmount:96,mAmount:88,diff:8,status:'有差异',result:'金额不一致',reason:'平台 96.00 / 商户 88.00'},
+ {p:'PZ2026072400003',m:'SH2026072400003',merchant:'星星充电服务',vendor:'星星科技',station:'科技园 A 站 / 02桩 / 01枪',date:'2026-07-24',start:'2026-07-24 12:31:08',power:28.4,pAmount:85,mAmount:85,diff:0,status:'已勾对',result:'对平',reason:'订单金额、退款金额、设备信息均一致'},
+ {p:'PZ2026072400004',m:'SH2026072400004',merchant:'星星充电服务',vendor:'星星科技',station:'科技园 A 站 / 02桩 / 02枪',date:'2026-07-24',start:'2026-07-24 14:02:15',power:42.2,pAmount:126,mAmount:126,diff:0,status:'已勾对',result:'对平',reason:'订单金额、退款金额、设备信息均一致'},
+ {p:'PZ2026072400005',m:'SH2026072400005',merchant:'星星充电服务',vendor:'星星科技',station:'科技园 A 站 / 03桩 / 01枪',date:'2026-07-24',start:'2026-07-24 16:20:00',power:22.1,pAmount:57,mAmount:57,diff:0,status:'已勾对',result:'对平',reason:'订单金额、退款金额、设备信息均一致'},
+ {p:'PZ2026072400006',m:'SH2026072400006',merchant:'星星充电服务',vendor:'星星科技',station:'科技园 A 站 / 03桩 / 02枪',date:'2026-07-24',start:'2026-07-24 18:10:05',power:34.0,pAmount:93,mAmount:58,diff:35,status:'有差异',result:'金额不一致',reason:'平台 93.00 / 商户 58.00'},
+ {p:'PZ2026072400007',m:'SH2026072400007',merchant:'星星充电服务',vendor:'智充科技',station:'科技园 B 站 / 01桩 / 01枪',date:'2026-07-24',start:'2026-07-24 09:10:22',power:25.3,pAmount:76,mAmount:76,diff:0,status:'已勾对',result:'对平',reason:'订单金额、退款金额、设备信息均一致'},
+ {p:'PZ2026072400008',m:'-',merchant:'星星充电服务',vendor:'智充科技',station:'科技园 B 站 / 01桩 / 02枪',date:'2026-07-24',start:'2026-07-24 10:10:15',power:17.3,pAmount:64,mAmount:null,diff:64,status:'有差异',result:'平台单边',reason:'平台有订单，商户侧无对应记录'},
+ {p:'-',m:'SH2026072400015',merchant:'星星充电服务',vendor:'智充科技',station:'科技园 B 站 / 02桩 / 01枪',date:'2026-07-24',start:'2026-07-24 11:20:00',power:20.5,pAmount:null,mAmount:62,diff:62,status:'有差异',result:'商户单边',reason:'商户有订单，平台侧无对应记录'},
+ {p:'PZ2026072400009',m:'SH2026072400009',merchant:'湾区停车充电',vendor:'万马充电',station:'湾区中心 B 站 / 01桩 / 01枪',date:'2026-07-24',start:'2026-07-24 09:10:22',power:25.3,pAmount:76,mAmount:76,diff:0,status:'已勾对',result:'对平',reason:'订单金额、退款金额、设备信息均一致'},
+ {p:'PZ2026072400010',m:'SH2026072400010',merchant:'湾区停车充电',vendor:'万马充电',station:'湾区中心 B 站 / 01桩 / 02枪',date:'2026-07-24',start:'2026-07-24 10:10:15',power:17.3,pAmount:64,mAmount:52,diff:12,status:'有差异',result:'金额不一致',reason:'平台 64.00 / 商户 52.00'},
+ {p:'PZ2026072400011',m:'SH2026072400011',merchant:'湾区停车充电',vendor:'万马充电',station:'湾区中心 B 站 / 02桩 / 01枪',date:'2026-07-24',start:'2026-07-24 11:10:00',power:13.0,pAmount:39,mAmount:39,diff:0,status:'已勾对',result:'对平',reason:'订单金额、退款金额、设备信息均一致'},
+ {p:'PZ2026072400012',m:'SH2026072400012',merchant:'湾区停车充电',vendor:'特来电',station:'湾区中心 C 站 / 01桩 / 01枪',date:'2026-07-24',start:'2026-07-24 12:00:10',power:19.3,pAmount:58,mAmount:58,diff:0,status:'已勾对',result:'对平',reason:'订单金额、退款金额、设备信息均一致'},
+ {p:'PZ2026072400013',m:'SH2026072400013',merchant:'湾区停车充电',vendor:'特来电',station:'湾区中心 C 站 / 01桩 / 02枪',date:'2026-07-24',start:'2026-07-24 13:00:00',power:20.6,pAmount:62,mAmount:62,diff:0,status:'已勾对',result:'对平',reason:'订单金额、退款金额、设备信息均一致'},
+ {p:'PZ2026072500001',m:'SH2026072500001',merchant:'星星充电服务',vendor:'星星科技',station:'科技园 A 站 / 01桩 / 01枪',date:'2026-07-25',start:'2026-07-25 08:12:05',power:30.0,pAmount:90,mAmount:90,diff:0,status:'已勾对',result:'对平',reason:'订单金额、退款金额、设备信息均一致'},
+ {p:'PZ2026072500002',m:'SH2026072500002',merchant:'星星充电服务',vendor:'智充科技',station:'科技园 B 站 / 01桩 / 01枪',date:'2026-07-25',start:'2026-07-25 09:20:11',power:25.0,pAmount:75,mAmount:70,diff:5,status:'有差异',result:'金额不一致',reason:'平台 75.00 / 商户 70.00'},
+ {p:'PZ2026072500003',m:'SH2026072500003',merchant:'湾区停车充电',vendor:'万马充电',station:'湾区中心 B 站 / 01桩 / 01枪',date:'2026-07-25',start:'2026-07-25 10:10:22',power:22.0,pAmount:66,mAmount:66,diff:0,status:'已勾对',result:'对平',reason:'订单金额、退款金额、设备信息均一致'}
+];
+
+const $ = id => document.getElementById(id);
+const money = n => '¥ ' + (n===null||n===undefined?0:n).toFixed(2);
+const statusClass = {'对账成功':'green','对账失败':'red','已勾对':'green','有差异':'red'};
+
+let summaryRows=[], summaryFiltered=[], detailFiltered=[], currentDetail={date:''};
+
+/* ===== Toast ===== */
+function toast(msg, type){
+  const t=$('toast');
+  t.className='toast show'+(type==='success'?' success':'');
+  t.innerHTML=(type==='success'?'✓ ':'ℹ ')+msg;
+  clearTimeout(t._t);
+  t._t=setTimeout(()=>t.classList.remove('show'), 2200);
+}
+
+/* ===== 汇总：按 日期 + 商户 + 厂商 分组 ===== */
+function summarize(data){
+  const map={};
+  data.forEach(r=>{
+    const key=r.date+'|'+r.merchant+'|'+r.vendor;
+    if(!map[key]) map[key]={date:r.date,merchant:r.merchant,vendor:r.vendor,pCount:0,mCount:0,pAmount:0,mAmount:0,diffAmount:0,matched:0,diffCount:0};
+    const o=map[key];
+    if(r.p!=='-'&&r.p!==null){o.pCount++;o.pAmount+=r.pAmount||0;}
+    if(r.m!=='-'&&r.m!==null){o.mCount++;o.mAmount+=r.mAmount||0;}
+    if(r.diff!==null&&r.diff!==undefined) o.diffAmount+=r.diff;
+    if(r.status==='已勾对') o.matched++;
+    if(r.status==='有差异') o.diffCount++;
+  });
+  return Object.values(map).map(o=>{
+    o.status = o.diffCount > 0 ? '对账失败' : '对账成功';
+    return o;
+  }).sort((a,b)=>a.date.localeCompare(b.date)||a.merchant.localeCompare(b.merchant)||a.vendor.localeCompare(b.vendor));
+}
+
+function setSummaryKpis(list){
+  const total=list.length;
+  const success=list.filter(r=>r.status==='对账成功').length;
+  const fail=list.filter(r=>r.status==='对账失败').length;
+  const diff=list.reduce((s,r)=>s+r.diffAmount,0);
+  $('sTotal').textContent=total;
+  $('sTotalSub').innerHTML='<span>共 <b>'+total+'</b> 个对账单</span>';
+  $('sSuccess').textContent=success;
+  $('sSuccessSub').innerHTML='<span>成功率 <b>'+(total?(success/total*100).toFixed(1):0)+'%</b></span>';
+  $('sFail').textContent=fail;
+  $('sFailSub').innerHTML='<span>失败 <b>'+fail+'</b> 个</span>';
+  $('sDiff').textContent=money(diff);
+  $('sDiffSub').innerHTML='<span>合计 <b>'+money(diff)+'</b></span>';
+}
+
+function renderSummary(){
+  const b=$('summaryBody');
+  b.innerHTML='';
+  if(!summaryFiltered.length){
+    b.innerHTML='<tr><td colspan="11"><div class="empty">暂无符合条件的对账数据</div></td></tr>';
+    $('summaryTotal').textContent='共 0 条记录';
+    setSummaryKpis([]);
+    return;
+  }
+  // 对账失败的排前面，其余按日期倒序
+  const sorted = [...summaryFiltered].sort((a,b)=>{
+    if(a.status==='对账失败' && b.status!=='对账失败') return -1;
+    if(a.status!=='对账失败' && b.status==='对账失败') return 1;
+    return (b.date||'').localeCompare(a.date||'');
+  });
+  sorted.forEach((r,i)=>{
+    const sc=statusClass[r.status]||'gray';
+    const actions=summaryActions(r);
+    b.innerHTML+=`<tr>
+      <td>${i+1}</td>
+      <td>${r.date}</td>
+      <td>${r.merchant}</td>
+      <td>${r.vendor}</td>
+      <td class="num">${r.pCount}</td>
+      <td class="num">${money(r.pAmount)}</td>
+      <td class="num">${r.mCount}</td>
+      <td class="num">${money(r.mAmount)}</td>
+      <td class="num ${r.diffAmount?'diff-bad':'diff-zero'}">${money(r.diffAmount)}</td>
+      <td><span class="pill ${sc}"><span class="dot"></span>${r.status}</span></td>
+      <td>${actions.map(x=>`<span class="link" onclick="runSummaryAction('${r.date}|${r.merchant}|${r.vendor}','${x.t}')">${x.l}</span>`).join('')}</td>
+    </tr>`;
+  });
+  $('summaryTotal').textContent=`共 ${summaryFiltered.length} 条记录`;
+  setSummaryKpis(summaryFiltered);
+}
+
+function summaryActions(r){
+  const a=[{t:'detail',l:'查看详情'}];
+  if(r.status==='对账失败') a.push({t:'retry',l:'重新对账'});
+  return a;
+}
+
+function runSummaryAction(key, type){
+  const [date,merchant,vendor]=key.split('|');
+  if(type==='detail'){
+    openDetail(merchant, vendor, date);
+  }else if(type==='retry'){
+    toast('已重新发起对账：'+merchant+' / '+vendor, 'success');
+  }
+}
+
+function populateSummarySelects(){
+  const merchants=[...new Set(rows.map(r=>r.merchant))].sort();
+  const vendors=[...new Set(rows.map(r=>r.vendor))].sort();
+  const mc=$('qMerchant'); const vc=$('qVendor');
+  mc.innerHTML='<option value="">全部</option>'+merchants.map(m=>`<option>${m}</option>`).join('');
+  vc.innerHTML='<option value="">全部</option>'+vendors.map(v=>`<option>${v}</option>`).join('');
+}
+
+function applySummaryFilter(silent){
+  const start=$('qStart').value, end=$('qEnd').value;
+  const merchant=$('qMerchant').value, vendor=$('qVendor').value, status=$('qStatus').value;
+  let filtered=rows.filter(r=>(!start||r.date>=start)&&(!end||r.date<=end)&&(!merchant||r.merchant===merchant)&&(!vendor||r.vendor===vendor));
+  summaryRows=summarize(filtered);
+  if(status) summaryRows=summaryRows.filter(r=>r.status===status);
+  summaryFiltered=[...summaryRows];
+  renderSummary();
+  if(!silent) toast('查询完成，命中 '+summaryFiltered.length+' 个对账单','success');
+}
+
+function resetSummaryFilter(){
+  $('qStart').value='2026-07-24';
+  $('qEnd').value='2026-07-24';
+  $('qMerchant').value='';
+  $('qVendor').value='';
+  $('qStatus').value='';
+  applySummaryFilter(true);
+  toast('筛选已重置');
+}
+
+/* ===== 详情页 ===== */
+function openDetail(merchant, vendor, date){
+  currentDetail={date, merchant, vendor};
+  // 填充站点下拉
+  const dayRows=rows.filter(r=>r.date===date&&(!merchant||r.merchant===merchant)&&(!vendor||r.vendor===vendor));
+  const stations=[...new Set(dayRows.map(r=>r.station))].sort();
+  $('qDetailStation').innerHTML='<option value="">全部站点</option>'+stations.map(s=>`<option>${s}</option>`).join('');
+  $('qDetailStation').value='';
+  $('qStatus').value='';
+  applyDetailFilter(true);
+  $('crumb').innerHTML='对账管理 / 商户对账 / <b>对账报告</b>';
+  $('detailSub').textContent = (merchant || '全部商户') + ' / ' + (vendor || '全部厂商');
+  $('viewSummary').classList.remove('show');
+  $('viewDetail').classList.add('show');
+}
+
+function backToList(){
+  $('viewDetail').classList.remove('show');
+  $('viewSummary').classList.add('show');
+  $('crumb').innerHTML='对账管理 / <b>商户对账</b>';
+  applySummaryFilter(true);
+}
+
+function setDetailKpis(list){
+  const platformCount=list.filter(r=>r.p&&r.p!=='-').length;
+  const merchantCount=list.filter(r=>r.m&&r.m!=='-').length;
+  const matched=list.filter(r=>r.status==='已勾对');
+  const matchedAmount=matched.reduce((s,r)=>s+(r.diff===0?(r.pAmount||0):0),0);
+  const diffList=list.filter(r=>r.status==='有差异'&&r.diff!==null&&r.diff!==undefined);
+  const diff=diffList.reduce((s,r)=>s+r.diff,0);
+  // 单边：平台单边(p有m无) + 商户单边(m有p无)
+  const unilateral=list.filter(r=>r.result==='平台单边'||r.result==='商户单边').length;
+  const diffAmountCount=diffList.length-unilateral;
+
+  $('dPlatformCount').textContent=platformCount;
+  $('dPlatformCountSub').innerHTML='<span>共 <b>'+platformCount+'</b> 笔</span>';
+  $('dMerchantCount').textContent=merchantCount;
+  $('dMerchantCountSub').innerHTML='<span>共 <b>'+merchantCount+'</b> 笔</span>';
+  $('dMatchedAmount').textContent=money(matchedAmount);
+  $('dMatchedAmountSub').innerHTML='<span>已勾对 <b>'+matched.length+'</b> 笔</span>';
+  $('dDiff').textContent=money(diff);
+  $('dDiffSub').innerHTML='<span>金额差异 <b>'+diffAmountCount+' 笔</b></span><span>单边 <b>'+unilateral+' 笔</b></span>';
+}
+
+function renderList(){
+  const b=$('listBody');
+  b.innerHTML='';
+  if(!detailFiltered.length){
+    b.innerHTML='<tr><td colspan="11"><div class="empty">暂无符合条件的业务订单</div></td></tr>';
+    setDetailKpis([]);
+    $('detailCount').textContent='共 0 笔';
+    $('pageTotal').textContent='共 0 条记录';
+    return;
+  }
+  // 有差异的排前面，其余按时间倒序
+  const sorted = [...detailFiltered].sort((a,b)=>{
+    if(a.status==='有差异' && b.status!=='有差异') return -1;
+    if(a.status!=='有差异' && b.status==='有差异') return 1;
+    return (b.start||'').localeCompare(a.start||'');
+  });
+  sorted.forEach((r,i)=>{
+    const sc=statusClass[r.status]||'gray';
+    const diffBad = r.diff !== null && r.diff !== undefined && r.diff > 0;
+    b.innerHTML+=`<tr ${r.status==='有差异'?'style="background:#fff7ed"':''}>
+      <td>${i+1}</td>
+      <td class="mono">${r.p}</td>
+      <td class="mono">${r.m}</td>
+      <td>${r.station}</td>
+      <td style="white-space:nowrap;color:var(--text2);font-size:12px">${r.start}</td>
+      <td class="num">${r.pAmount===null?'-':money(r.pAmount)}</td>
+      <td class="num">${r.mAmount===null?'-':money(r.mAmount)}</td>
+      <td class="num ${diffBad?'diff-bad':'diff-zero'}">${r.diff===null?'-':money(r.diff)}</td>
+      <td><span class="pill ${sc}"><span class="dot"></span>${r.status}</span></td>
+      <td title="${r.reason}">${r.result}<div style="font-size:11px;color:#94a3b8;max-width:220px;white-space:normal">${r.reason||'-'}</div></td>
+      <td><span class="link" onclick="toast('订单溯源：可查看双方原始报文与完整链路')">溯源</span></td>
+    </tr>`;
+  });
+  setDetailKpis(detailFiltered);
+  $('detailCount').textContent=`共 ${detailFiltered.length} 笔业务订单`;
+  $('pageTotal').textContent=`共 ${detailFiltered.length} 条记录`;
+}
+
+function applyDetailFilter(silent){
+  const station=$('qDetailStation').value;
+  const status=$('qStatus').value;
+  detailFiltered=rows.filter(r=>
+    r.date===currentDetail.date &&
+    (!currentDetail.merchant || r.merchant===currentDetail.merchant) &&
+    (!currentDetail.vendor || r.vendor===currentDetail.vendor) &&
+    (!station || r.station===station) &&
+    (!status || r.status===status)
+  );
+  renderList();
+  if(!silent) toast('查询完成，命中 '+detailFiltered.length+' 笔','success');
+}
+
+function resetDetailFilter(silent){
+  $('qDetailStation').value='';
+  $('qStatus').value='';
+  applyDetailFilter(true);
+  if(!silent) toast('筛选已重置');
+}
+
+/* ===== 发起对账弹窗 ===== */
+function openStartReconcile(){$('reconcileModal').classList.add('show');}
+function closeStartReconcile(){$('reconcileModal').classList.remove('show');}
+function confirmStartReconcile(){
+  const date=$('reconDate').value;
+  if(!date){toast('请选择交易日期');return;}
+  closeStartReconcile();
+  toast('已发起对账：'+date, 'success');
+}
+
+/* 初始化 */
+populateSummarySelects();
+applySummaryFilter(true);
+</script></body></html>
