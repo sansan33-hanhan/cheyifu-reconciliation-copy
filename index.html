@@ -163,21 +163,49 @@ iframe.show { display: block; }
       <a href="#platform" data-page="platform" aria-current="page">平台对账</a>
       <a href="#merchant" data-page="merchant">商户对账</a>
     </div>
+    <div class="primary-menu" id="shareMenu">
+      <span class="ico">💸</span><span>分账管理</span><span class="arrow">▶</span>
+    </div>
+    <div class="submenu" id="shareSubmenu">
+      <a href="#share-template" data-page="share-template">分账模板</a>
+      <a href="#share-transfer" data-page="share-transfer">分账转账</a>
+      <a href="#share-record" data-page="share-record">转账记录</a>
+      <a href="#share-detail" data-page="share-detail">分账明细</a>
+      <a href="#share-bill" data-page="share-bill">分账账单</a>
+    </div>
   </nav>
   <div class="user"><span class="avatar">运</span><span><b>平台运营</b>车易付充电</span></div>
 </aside>
 <main>
   <iframe id="platform" title="平台对账" src="platform_copy/platform-app.html#/list"></iframe>
   <iframe id="merchant" title="商户对账" src="merchant_copy/merchant-app.html"></iframe>
+  <iframe id="share-template" title="分账模板" src="share_copy/分账模板.html"></iframe>
+  <iframe id="share-transfer" title="分账转账" src="share_copy/分账转账.html"></iframe>
+  <iframe id="share-record" title="转账记录" src="share_copy/转账记录.html"></iframe>
+  <iframe id="share-detail" title="分账明细" src="share_copy/分账明细.html"></iframe>
+  <iframe id="share-bill" title="分账账单" src="share_copy/分账账单.html"></iframe>
 </main>
 <script>
 (function () {
-  const validPages = ['platform', 'merchant'];
+  const validPages = ['platform', 'merchant', 'share-template', 'share-transfer', 'share-record', 'share-detail', 'share-bill'];
   const links = document.querySelectorAll('.submenu a');
   const menu = document.getElementById('reconciliationMenu');
+  const shareMenu = document.getElementById('shareMenu');
+  const reconciliationSubmenu = document.getElementById('reconciliationSubmenu');
+  const shareSubmenu = document.getElementById('shareSubmenu');
+  const pageTitles = {
+    platform: '平台对账',
+    merchant: '商户对账',
+    'share-template': '分账模板',
+    'share-transfer': '分账转账',
+    'share-record': '转账记录',
+    'share-detail': '分账明细',
+    'share-bill': '分账账单'
+  };
   let currentPage = null;
 
   function showListPage(page) {
+    if (page !== 'platform' && page !== 'merchant') return;
     const frame = document.getElementById(page);
     if (!frame) return;
     try {
@@ -205,8 +233,13 @@ iframe.show { display: block; }
       if (selected) link.setAttribute('aria-current', 'page');
       else link.removeAttribute('aria-current');
     });
+    const inShare = page.startsWith('share-');
+    menu.classList.toggle('open', !inShare);
+    shareMenu.classList.toggle('open', inShare);
+    reconciliationSubmenu.style.display = inShare ? 'none' : 'block';
+    shareSubmenu.style.display = inShare ? 'block' : 'none';
     if (updateHash && location.hash !== '#' + page) location.hash = '#' + page;
-    document.title = (page === 'merchant' ? '商户对账' : '平台对账') + ' - 车易付充电运营平台';
+    document.title = pageTitles[page] + ' - 车易付充电运营平台';
     if (window.innerWidth <= 760) document.querySelector('aside').classList.remove('show');
     if (isPageSwitch) requestAnimationFrame(() => showListPage(page));
     currentPage = page;
@@ -216,7 +249,19 @@ iframe.show { display: block; }
 
   menu.addEventListener('click', function () {
     this.classList.toggle('open');
-    document.getElementById('reconciliationSubmenu').style.display = this.classList.contains('open') ? 'block' : 'none';
+    reconciliationSubmenu.style.display = this.classList.contains('open') ? 'block' : 'none';
+    if (this.classList.contains('open')) {
+      shareMenu.classList.remove('open');
+      shareSubmenu.style.display = 'none';
+    }
+  });
+  shareMenu.addEventListener('click', function () {
+    this.classList.toggle('open');
+    shareSubmenu.style.display = this.classList.contains('open') ? 'block' : 'none';
+    if (this.classList.contains('open')) {
+      menu.classList.remove('open');
+      reconciliationSubmenu.style.display = 'none';
+    }
   });
   window.addEventListener('hashchange', function () {
     activate(location.hash.replace('#', ''), false);

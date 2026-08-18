@@ -1,0 +1,27 @@
+#feedbackHost {
+    font-size: 13px;
+    color: #081222;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+#feedbackHost::-webkit-scrollbar {
+    display: none;
+}
+
+#feedbackHostBtn {
+    order: 3;
+}
+
+#feedbackHostBtn a {
+    background: url(images/discussion_on.svg) no-repeat center center, linear-gradient(transparent, transparent);
+}
+
+#feedbackHostBtn a.selected, #feedbackHostBtn a.selected:hover {
+    background: url('images/discussion_off.svg') no-repeat center center, linear-gradient(transparent, transparent);
+}
+
+#inspectControlFrameHeader {
+    z-index: initial;
+}
