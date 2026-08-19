@@ -168,9 +168,7 @@ iframe.show { display: block; }
     </div>
     <div class="submenu" id="shareSubmenu">
       <a href="#share-template" data-page="share-template">分账模板</a>
-      <a href="#share-transfer" data-page="share-transfer">分账转账</a>
       <a href="#share-record" data-page="share-record">转账记录</a>
-      <a href="#share-detail" data-page="share-detail">分账明细</a>
       <a href="#share-bill" data-page="share-bill">分账账单</a>
     </div>
   </nav>
@@ -179,15 +177,13 @@ iframe.show { display: block; }
 <main>
   <iframe id="platform" title="平台对账" src="platform_copy/platform-app.html#/list"></iframe>
   <iframe id="merchant" title="商户对账" src="merchant_copy/merchant-app.html"></iframe>
-  <iframe id="share-template" title="分账模板" src="share_copy/分账模板.html?v=stickyless-1"></iframe>
-  <iframe id="share-transfer" title="分账转账" src="share_copy/分账转账.html?v=stickyless-1"></iframe>
-  <iframe id="share-record" title="转账记录" src="share_copy/转账记录.html?v=stickyless-1"></iframe>
-  <iframe id="share-detail" title="分账明细" src="share_copy/分账明细.html?v=stickyless-1"></iframe>
-  <iframe id="share-bill" title="分账账单" src="share_copy/分账账单.html?v=stickyless-1"></iframe>
+  <iframe id="share-template" title="分账模板" src="share_copy/分账模板.html?v=newshare-1"></iframe>
+  <iframe id="share-record" title="转账记录" src="share_copy/转账记录.html?v=newshare-1"></iframe>
+  <iframe id="share-bill" title="分账账单" src="share_copy/分账账单.html?v=newshare-1"></iframe>
 </main>
 <script>
 (function () {
-  const validPages = ['platform', 'merchant', 'share-template', 'share-transfer', 'share-record', 'share-detail', 'share-bill'];
+  const validPages = ['platform', 'merchant', 'share-template', 'share-record', 'share-bill'];
   const links = document.querySelectorAll('.submenu a');
   const menu = document.getElementById('reconciliationMenu');
   const shareMenu = document.getElementById('shareMenu');
@@ -197,9 +193,7 @@ iframe.show { display: block; }
     platform: '平台对账',
     merchant: '商户对账',
     'share-template': '分账模板',
-    'share-transfer': '分账转账',
     'share-record': '转账记录',
-    'share-detail': '分账明细',
     'share-bill': '分账账单'
   };
   let currentPage = null;
